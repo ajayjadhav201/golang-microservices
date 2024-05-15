@@ -15,8 +15,8 @@ func RegisterGrpcClient(mux *http.ServeMux) {
 	// orderClient, err := grpc.Dial(orderServiceAddr, creds)
 	// common.Fatal(err)
 	// defer orderClient.Close()
-	//
-	authClient, err := grpc.Dial("localhost:2001", creds)
+	//S
+	authClient, err := grpc.NewClient("localhost:2001", creds)
 	common.Fatal(err)
 	common.Println("ajaj errro while connecting to authservice ", err)
 

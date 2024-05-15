@@ -31,7 +31,7 @@ func (o *OrderClient) CreateOrderHandler(w http.ResponseWriter, r *http.Request)
 	common.Println("ajaj customer id is ", customerID)
 
 	var items []*pb.ItemsWithQuantity
-	if err := common.ReadJSON(r, &items); err != nil {
+	if err := common.ReadJSON(r, items); err != nil {
 		common.WriteError(w, http.StatusBadRequest, common.UnmarshalFailed)
 		return
 	}

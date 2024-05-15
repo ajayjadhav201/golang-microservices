@@ -25,11 +25,11 @@ type SignupRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	FirstName    string `protobuf:"bytes,1,opt,name=FirstName,proto3" json:"FirstName,omitempty"`
-	LastName     string `protobuf:"bytes,2,opt,name=LastName,proto3" json:"LastName,omitempty"`
-	Email        string `protobuf:"bytes,3,opt,name=Email,proto3" json:"Email,omitempty"`
-	Password     string `protobuf:"bytes,4,opt,name=Password,proto3" json:"Password,omitempty"`
-	MobileNumber string `protobuf:"bytes,5,opt,name=MobileNumber,proto3" json:"MobileNumber,omitempty"`
+	FirstName    string `protobuf:"bytes,1,opt,name=FirstName,proto3" json:"FirstName,omitempty" validate:"required"`
+	LastName     string `protobuf:"bytes,2,opt,name=LastName,proto3" json:"LastName,omitempty" validate:"required"`
+	Email        string `protobuf:"bytes,3,opt,name=Email,proto3" json:"Email,omitempty" validate:"required,email"`
+	Password     string `protobuf:"bytes,4,opt,name=Password,proto3" json:"Password,omitempty" validate:"required"`
+	MobileNumber string `protobuf:"bytes,5,opt,name=MobileNumber,proto3" json:"MobileNumber,omitempty" validate:"required"`
 }
 
 func (x *SignupRequest) Reset() {

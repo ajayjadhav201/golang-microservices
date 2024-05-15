@@ -38,9 +38,13 @@ func WriteGrpcError(w http.ResponseWriter, err error) {
 		grpcCode := st.Code()
 		if grpcCode == codes.Unavailable {
 			WriteServerNotAvailableError(w)
+		} else {
+			WriteInternalServerError(w)
 		}
 	} else {
 		WriteInternalServerError(w)
 	}
 
 }
+
+func WriteRequestBodyError(w http.ResponseWriter, err error) {}
