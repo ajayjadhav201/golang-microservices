@@ -7,20 +7,25 @@ import (
 	pb "github.com/ajayjadhav201/common/api"
 )
 
-type Handler struct {
-	//gateway
+type OrderClient struct {
 	Client pb.OrderServiceClient
 }
 
-func NewHandler(service pb.OrderServiceClient) *Handler {
-	return &Handler{service}
+func NewHandler(service pb.OrderServiceClient) *OrderClient {
+	return &OrderClient{service}
 }
 
-func (h *Handler) registerRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("POST /api/customers/{customerID}/orders", h.HandlerCreateOrder)
+func (o *OrderClient) registerRoutes(mux *http.ServeMux) {
+	mux.HandleFunc("POST /api/customers/{customerID}/orders", o.CreateOrderHandler)
 }
 
-func (h *Handler) HandlerCreateOrder(w http.ResponseWriter, r *http.Request) {
+//
+//
+//
+//
+//
+
+func (o *OrderClient) CreateOrderHandler(w http.ResponseWriter, r *http.Request) {
 	//
 	customerID := r.PathValue("customerID")
 	common.Println("ajaj customer id is ", customerID)
@@ -32,7 +37,7 @@ func (h *Handler) HandlerCreateOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// pb.NewOrderServiceClient()
-	order, err := h.Client.CreateOrder(r.Context(), &pb.CreateOrderRequest{
+	order, err := o.Client.CreateOrder(r.Context(), &pb.CreateOrderRequest{
 		CustomerID: customerID,
 		Items:      items,
 	})

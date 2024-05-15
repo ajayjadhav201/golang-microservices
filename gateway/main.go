@@ -17,7 +17,7 @@ var (
 func main() {
 	//Make Http Connection
 	mux := http.NewServeMux()
-	GrpcClient(mux)
+	RegisterGrpcClient(mux)
 	//
 	//
 	//
