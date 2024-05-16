@@ -10,6 +10,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+var (
+	InvalidReqBody = "Invalid request body."
+)
+
 func Fatal(err error, s ...string) {
 	if err != nil {
 		if len(s) == 0 {
@@ -60,16 +64,23 @@ func WriteRequestBodyError(w http.ResponseWriter, err error) {
 			switch fieldTag {
 			case "email":
 				newerr = SPrintf("%s, %s", newerr, "email is not valid")
-
+			case "mobile":
+				newerr = SPrintf("%s, %s", newerr, "mobile number is not valid")
 			case "required":
 				newerr = SPrintf("%s, %s is required", newerr, fieldName)
+			case "gte":
+				newerr = SPrintf("%s, %s is too short", newerr, fieldName)
 			}
 		}
-		WriteError(w, http.StatusBadRequest, newerr)
+		if len(newerr) < 1 {
+			WriteError(w, http.StatusBadRequest, InvalidReqBody)
+		} else {
+			WriteError(w, http.StatusBadRequest, newerr)
+		}
 		// return errors.New(newerr)
 	} else if strings.Contains(err.Error(), "EOF") {
-		WriteError(w, http.StatusBadRequest, "Invalid request body.")
+		WriteError(w, http.StatusBadRequest, InvalidReqBody)
 	} else {
-		WriteError(w, http.StatusBadRequest, "Invalid request body.")
+		WriteError(w, http.StatusBadRequest, InvalidReqBody)
 	}
 }

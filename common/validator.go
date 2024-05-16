@@ -11,6 +11,7 @@ var validate *validator.Validate = initValidator()
 func initValidator() *validator.Validate {
 	v := validator.New()
 	v.RegisterValidation("mobile", ValidateMobileNumber)
+	v.RegisterValidation("password", ValidatePassword)
 	return v
 }
 
