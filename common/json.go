@@ -2,19 +2,13 @@ package common
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
-	"strings"
-
-	"github.com/go-playground/validator/v10"
 )
 
 const (
 	UnmarshalFailed   = "Failed to parse request body"
 	InternalServerErr = "Internal server error"
 )
-
-var validate *validator.Validate = validator.New()
 
 func WriteJSON(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
@@ -25,30 +19,14 @@ func WriteJSON(w http.ResponseWriter, status int, data any) {
 func ReadJSON(r *http.Request, pointer any) error {
 	err := json.NewDecoder(r.Body).Decode(pointer)
 	if err != nil {
+		Println("returning first error")
 		return err
 	}
 	err = validate.Struct(pointer)
-	if err == nil {
-		return nil
+	if err != nil {
+		return err
 	}
-	//create custom error messages here
-	newerr := ""
-	if strings.Contains(err.Error(), "Key") {
-		for _, err := range err.(validator.ValidationErrors) {
-			fieldName := err.Field()
-			fieldTag := err.Tag()
-			Println("ajaj fields are name: ", fieldName, "tag : ", fieldTag)
-			switch fieldTag {
-			case "email":
-				newerr = SPrintf("%s, %s", newerr, "email is not valid")
-
-			case "required":
-				newerr = SPrintf("%s, %s is required", newerr, fieldName)
-			}
-		}
-		return errors.New(newerr)
-	}
-	return err
+	return nil
 
 	// if r.ContentLength <= 0 {
 	// 	return errors.New("bad request")

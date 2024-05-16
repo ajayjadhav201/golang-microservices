@@ -33,7 +33,7 @@ func (a *AuthClient) SignupHandler(w http.ResponseWriter, r *http.Request) {
 	req := &pb.SignupRequest{}
 	if err := common.ReadJSON(r, req); err != nil {
 		common.Println("ajaj error while parsing json", err.Error())
-		common.WriteError(w, http.StatusBadRequest, common.SPrintf("aj error %s", err.Error()))
+		common.WriteRequestBodyError(w, err)
 		return
 	}
 	common.Println("ajaj signup request is ", req)
