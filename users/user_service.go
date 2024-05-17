@@ -1,8 +1,8 @@
 package main
 
 import (
-	pb "github.com/ajayjadhav201/common/api"
-) 
+	"api"
+)
 
 type UserService interface {
 	Signup()
@@ -10,7 +10,7 @@ type UserService interface {
 }
 
 type userService struct {
-	pb.UnimplementedAuthServiceServer
+	api.UnimplementedAuthServiceServer
 }
 
 func NewUserService() *userService {

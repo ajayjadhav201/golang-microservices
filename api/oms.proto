@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/ajayjadhav201/common/api";
+option go_package = "api";
 
 package api;
 

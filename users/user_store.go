@@ -1,6 +1,8 @@
 package main
 
-import "time"
+import (
+	"model"
+)
 
 type UserStore interface {
 	CreateUser()
@@ -10,25 +12,13 @@ type UserStore interface {
 	DeleteUser()
 }
 
-type User struct {
-	UserID       string
-	FirstName    string
-	LastName     string
-	Email        string
-	Password     string
-	MobileNumber string
-	Token        string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
-}
-
 type userStore struct {
-	Users []*User
+	Users []*model.User
 }
 
 func NewUserStore() UserStore {
 	return &userStore{
-		Users: []*User{},
+		Users: []*model.User{},
 	}
 }
 
