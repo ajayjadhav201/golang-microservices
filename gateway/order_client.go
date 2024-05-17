@@ -1,17 +1,17 @@
 package main
 
 import (
+	"api"
 	"net/http"
 
 	"github.com/ajayjadhav201/common"
-	pb "github.com/ajayjadhav201/common/api"
 )
 
 type OrderClient struct {
-	Client pb.OrderServiceClient
+	Client api.OrderServiceClient
 }
 
-func NewHandler(service pb.OrderServiceClient) *OrderClient {
+func NewHandler(service api.OrderServiceClient) *OrderClient {
 	return &OrderClient{service}
 }
 
@@ -30,14 +30,14 @@ func (o *OrderClient) CreateOrderHandler(w http.ResponseWriter, r *http.Request)
 	customerID := r.PathValue("customerID")
 	common.Println("ajaj customer id is ", customerID)
 
-	var items []*pb.ItemsWithQuantity
+	var items []*api.ItemsWithQuantity
 	if err := common.ReadJSON(r, items); err != nil {
 		common.WriteError(w, http.StatusBadRequest, common.UnmarshalFailed)
 		return
 	}
 
 	// pb.NewOrderServiceClient()
-	order, err := o.Client.CreateOrder(r.Context(), &pb.CreateOrderRequest{
+	order, err := o.Client.CreateOrder(r.Context(), &api.CreateOrderRequest{
 		CustomerID: customerID,
 		Items:      items,
 	})
