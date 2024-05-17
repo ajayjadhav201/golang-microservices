@@ -1,6 +1,7 @@
 package main
 
 import (
+	"model"
 	"testing"
 )
 
@@ -9,7 +10,7 @@ func TestUserStore_CreateUser(t *testing.T) {
 	store := NewUserStore()
 
 	// Call CreateUser method
-	store.CreateUser()
+	store.CreateUser(model.User{})
 
 	// Add your assertions here if needed
 }
@@ -29,7 +30,7 @@ func TestUserStore_GetUserById(t *testing.T) {
 	store := NewUserStore()
 
 	// Call GetUserById method
-	store.GetUserById()
+	store.GetUserById("")
 
 	// Add your assertions here if needed
 }
@@ -39,7 +40,7 @@ func TestUserStore_UpdateUser(t *testing.T) {
 	store := NewUserStore()
 
 	// Call UpdateUser method
-	store.UpdateUser()
+	store.UpdateUser("", model.User{})
 
 	// Add your assertions here if needed
 }
@@ -49,7 +50,7 @@ func TestUserStore_DeleteUser(t *testing.T) {
 	store := NewUserStore()
 
 	// Call DeleteUser method
-	store.DeleteUser()
+	store.DeleteUser("")
 
 	// Add your assertions here if needed
 }

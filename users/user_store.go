@@ -5,11 +5,11 @@ import (
 )
 
 type UserStore interface {
-	CreateUser()
-	GetUserById()
-	GetUsers()
-	UpdateUser()
-	DeleteUser()
+	CreateUser(user model.User) (*model.User, error)
+	GetUsers() *[]model.User
+	GetUserById(id string) (*model.User, error)
+	UpdateUser(id string, user model.User) (*model.User, error)
+	DeleteUser(id string) error
 }
 
 type userStore struct {
@@ -22,22 +22,27 @@ func NewUserStore() UserStore {
 	}
 }
 
-func (s *userStore) CreateUser() {
+func (s *userStore) CreateUser(user model.User) (*model.User, error) {
 	//
+	return nil, nil
 }
 
-func (s *userStore) GetUsers() {
+func (s *userStore) GetUsers() *[]model.User {
 	//
+	return nil
 }
 
-func (s *userStore) GetUserById() {
+func (s *userStore) GetUserById(id string) (*model.User, error) {
 	//
+	return nil, nil
 }
 
-func (s *userStore) UpdateUser() {
+func (s *userStore) UpdateUser(id string, user model.User) (*model.User, error) {
 	//
+	return nil, nil
 }
 
-func (s *userStore) DeleteUser() {
+func (s *userStore) DeleteUser(id string) error {
 	//
+	return nil
 }

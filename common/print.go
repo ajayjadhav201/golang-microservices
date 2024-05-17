@@ -25,3 +25,7 @@ func SPrintf(format string, a ...any) string {
 func SPrintln(a ...any) string {
 	return fmt.Sprintln(a...)
 }
+
+func Errorf(format string, a ...any) error {
+	return fmt.Errorf(format, a...)
+}
