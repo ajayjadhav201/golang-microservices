@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "api";
+option go_package = "/api";
 
 package api;
 
@@ -16,6 +16,12 @@ message SignupRequest {
     string Email = 3;
     string Password = 4;
     string MobileNumber = 5;
+    string Address = 6;
+    string City = 7;
+    string State = 8;
+    string Country = 9;
+    string ZipCode = 10;
+    string ProfileImage = 11;
 }
 
 message SignupResponse {
@@ -31,4 +37,18 @@ message LoginRequest {
 message LoginResponse {
     string Message = 1;
     string Token = 2;
+}
+
+message UpdateUserRequest {
+    string FirstName = 1;
+    string LastName = 2;
+    string Email = 3;
+    string Password = 4;
+    string MobileNumber = 5;
+    string Address = 6;
+    string City = 7;
+    string State = 8;
+    string Country = 9;
+    string ZipCode = 10;
+    string ProfileImage = 11;
 }
