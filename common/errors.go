@@ -63,13 +63,13 @@ func WriteRequestBodyError(w http.ResponseWriter, err error) {
 			Println("ajaj fields are name: ", fieldName, "tag : ", fieldTag)
 			switch fieldTag {
 			case "email":
-				newerr = SPrintf("%s, %s", newerr, "email is not valid")
+				newerr = Sprintf("%s, %s", newerr, "email is not valid")
 			case "mobile":
-				newerr = SPrintf("%s, %s", newerr, "mobile number is not valid")
+				newerr = Sprintf("%s, %s", newerr, "mobile number is not valid")
 			case "required":
-				newerr = SPrintf("%s, %s is required", newerr, fieldName)
+				newerr = Sprintf("%s, %s is required", newerr, fieldName)
 			case "gte":
-				newerr = SPrintf("%s, %s is too short", newerr, fieldName)
+				newerr = Sprintf("%s, %s is too short", newerr, fieldName)
 			}
 		}
 		if len(newerr) < 1 {

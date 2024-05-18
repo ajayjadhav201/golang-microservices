@@ -1,10 +1,10 @@
 package common
 
-import "syscall"
+import "os"
 
 func EnvString(Key string, option string) string {
-	val, ok := syscall.Getenv(Key)
-	if ok {
+	val := os.Getenv(Key)
+	if val != "" {
 		return val
 	}
 	return option

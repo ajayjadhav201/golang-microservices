@@ -8,12 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	UserAlreadyRegistered = "User is already registered."
-	UserNotFound          = "User not found."
-)
-
-type UserStore interface {
+type ProductStore interface {
 	CreateUser(user model.User) (*model.User, error)
 	GetUsers() *[]model.User
 	GetUserById(id string) (*model.User, error)
@@ -21,12 +16,12 @@ type UserStore interface {
 	DeleteUser(id string) error
 }
 
-type userStore struct {
+type productStore struct {
 	Users []*model.User
 	DB    *gorm.DB
 }
 
-func NewUserStore() UserStore {
+func NewProductStore() ProductStore {
 	//
 	//
 	host := common.EnvString("DB_HOST", "localhost")
@@ -57,33 +52,33 @@ func NewUserStore() UserStore {
 	common.Println("transaction", tx.Statement)
 
 	common.Println("connected to database")
-	return &userStore{
+	return &productStore{
 		Users: []*model.User{},
 		DB:    db,
 	}
 }
 
-func (s *userStore) CreateUser(user model.User) (*model.User, error) {
+func (s *productStore) CreateUser(user model.User) (*model.User, error) {
 	//
 	return nil, nil
 }
 
-func (s *userStore) GetUsers() *[]model.User {
+func (s *productStore) GetUsers() *[]model.User {
 	//
 	return nil
 }
 
-func (s *userStore) GetUserById(id string) (*model.User, error) {
+func (s *productStore) GetUserById(id string) (*model.User, error) {
 	//
 	return nil, nil
 }
 
-func (s *userStore) UpdateUser(id string, user model.User) (*model.User, error) {
+func (s *productStore) UpdateUser(id string, user model.User) (*model.User, error) {
 	//
 	return nil, nil
 }
 
-func (s *userStore) DeleteUser(id string) error {
+func (s *productStore) DeleteUser(id string) error {
 	//
 	return nil
 }

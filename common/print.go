@@ -18,7 +18,7 @@ func SPrint(a ...any) string {
 	return fmt.Sprint(a...)
 }
 
-func SPrintf(format string, a ...any) string {
+func Sprintf(format string, a ...any) string {
 	return fmt.Sprintf(format, a...)
 }
 

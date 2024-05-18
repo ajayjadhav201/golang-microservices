@@ -4,6 +4,8 @@ import (
 	"net"
 
 	"github.com/ajayjadhav201/common"
+	"github.com/ajayjadhav201/users/database"
+	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload"
 	"google.golang.org/grpc"
 )
@@ -13,6 +15,11 @@ var (
 )
 
 func main() {
+	err := godotenv.Load(".env")
+	common.Fatal(err)
+
+	//
+	_ = database.NewUserStore()
 
 	grpcServer := grpc.NewServer()
 	l, err := net.Listen("tcp", grpcAddr)

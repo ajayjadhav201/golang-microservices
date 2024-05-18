@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Product struct {
-	ID                string
+	ID                int
 	ProductID         string
 	Name              string
 	Description       string
@@ -16,4 +16,12 @@ type Product struct {
 	SellerInformation string
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
+}
+
+type Image struct {
+	Path string `json:"path"`
+}
+
+func Images(images []Image) string {
+	return ""
 }

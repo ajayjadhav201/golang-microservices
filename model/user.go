@@ -3,7 +3,8 @@ package model
 import "time"
 
 type User struct {
-	ID              string `json:"ID"`
+	ID              uint   `gorm:"primaryKey"`
+	UserID          string `json:"ID"`
 	FirstName       string `json:"FirstName"`
 	LastName        string `json:"LastName"`
 	ProfileImage    string `json:"ProfileImage"`
@@ -15,4 +16,5 @@ type User struct {
 	Token           string `json:"Token"`
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
+	DeletedAt       *time.Time `gorm:"index"`
 }
