@@ -9,7 +9,7 @@ import (
 var validate *validator.Validate = initValidator()
 
 func initValidator() *validator.Validate {
-	v := validator.New()
+	v := validator.New(validator.WithRequiredStructEnabled())
 	v.RegisterValidation("mobile", ValidateMobileNumber)
 	v.RegisterValidation("password", ValidatePassword)
 	return v

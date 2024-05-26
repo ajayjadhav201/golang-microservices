@@ -1,11 +1,11 @@
 package main
 
 import (
+	"api"
 	"net"
 
 	"github.com/ajayjadhav201/common"
 	"github.com/ajayjadhav201/users/database"
-	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload"
 	"google.golang.org/grpc"
 )
@@ -15,8 +15,8 @@ var (
 )
 
 func main() {
-	err := godotenv.Load(".env")
-	common.Fatal(err)
+	// err := godotenv.Load(".env")
+	// common.Panic(err)
 
 	//
 	_ = database.NewUserStore()
@@ -25,8 +25,9 @@ func main() {
 	l, err := net.Listen("tcp", grpcAddr)
 	common.Fatal(err)
 	defer l.Close()
+	userservice := NewUserService()
 
-	// NewGrpcHandler(grpcServer)
+	api.RegisterAuthServiceServer(grpcServer, userservice)
 
 	common.Println("Auth service is started on: ", grpcAddr)
 	common.Fatal(grpcServer.Serve(l))

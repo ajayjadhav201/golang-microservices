@@ -34,6 +34,18 @@ func Panic(err error, s ...string) {
 	}
 }
 
+func WriteError(w http.ResponseWriter, status int, message string) {
+	WriteJSON(w, status, map[string]string{"error": message})
+}
+
+func WriteInternalServerError(w http.ResponseWriter) {
+	WriteJSON(w, http.StatusInternalServerError, map[string]string{"error": "Internal server error."})
+}
+
+func WriteServerNotAvailableError(w http.ResponseWriter) {
+	WriteJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "Server not available."})
+}
+
 func WriteGrpcError(w http.ResponseWriter, err error) {
 	if err == nil {
 		return
@@ -45,10 +57,10 @@ func WriteGrpcError(w http.ResponseWriter, err error) {
 		if grpcCode == codes.Unavailable {
 			WriteServerNotAvailableError(w)
 		} else {
-			WriteInternalServerError(w)
+			WriteError(w, http.StatusBadRequest, err.Error())
 		}
 	} else {
-		WriteInternalServerError(w)
+		WriteError(w, http.StatusBadRequest, err.Error())
 	}
 
 }
@@ -57,20 +69,27 @@ func WriteRequestBodyError(w http.ResponseWriter, err error) {
 	//create custom error messages here
 	if strings.Contains(err.Error(), "Key") {
 		newerr := ""
-		for _, err := range err.(validator.ValidationErrors) {
+		for i, err := range err.(validator.ValidationErrors) {
+			if i != 0 {
+				newerr = Sprintf("%s, ", newerr)
+			}
 			fieldName := err.Field()
 			fieldTag := err.Tag()
+
 			Println("ajaj fields are name: ", fieldName, "tag : ", fieldTag)
 			switch fieldTag {
 			case "email":
-				newerr = Sprintf("%s, %s", newerr, "email is not valid")
+				Println("ajaj showing email error ", newerr)
+				newerr = Sprintf("%s%s", newerr, "email is not valid")
 			case "mobile":
-				newerr = Sprintf("%s, %s", newerr, "mobile number is not valid")
+				Println("ajaj showing mobile number error ", newerr)
+				newerr = Sprintf("%s%s", newerr, "mobile number is not valid")
 			case "required":
-				newerr = Sprintf("%s, %s is required", newerr, fieldName)
+				newerr = Sprintf("%s%s is required", newerr, fieldName)
 			case "gte":
-				newerr = Sprintf("%s, %s is too short", newerr, fieldName)
+				newerr = Sprintf("%s%s is too short", newerr, fieldName)
 			}
+
 		}
 		if len(newerr) < 1 {
 			WriteError(w, http.StatusBadRequest, InvalidReqBody)

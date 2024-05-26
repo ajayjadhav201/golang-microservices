@@ -30,8 +30,6 @@ func (a *AuthClient) RegisterRoutes(mux *http.ServeMux) {
 
 // Signup
 func (a *AuthClient) SignupHandler(w http.ResponseWriter, r *http.Request) {
-
-	common.Println("ajaj param: ", r.URL.Path)
 	req := &api.SignupRequest{}
 	if err := common.ReadJSON(r, req); err != nil {
 		common.Println("ajaj error while parsing json", err.Error())

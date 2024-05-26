@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -24,6 +23,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
+		// ctx := context.WithValue(r.Context(), "user", claims["user"])
 		next.ServeHTTP(w, r)
 	})
 }
@@ -63,7 +63,7 @@ func ValidateToken(tokenString string) (*jwt.Token, error) {
 	}
 
 	if !token.Valid {
-		return nil, fmt.Errorf("invalid token")
+		return nil, common.Errorf("invalid token")
 	}
 
 	return token, nil

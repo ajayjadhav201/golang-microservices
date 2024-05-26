@@ -19,7 +19,6 @@ func WriteJSON(w http.ResponseWriter, status int, data any) {
 func ReadJSON(r *http.Request, pointer any) error {
 	err := json.NewDecoder(r.Body).Decode(pointer)
 	if err != nil {
-		Println("returning first error")
 		return err
 	}
 	err = validate.Struct(pointer)
@@ -38,14 +37,3 @@ func ReadJSON(r *http.Request, pointer any) error {
 	// return json.Unmarshal(b, pointer)
 }
 
-func WriteError(w http.ResponseWriter, status int, message string) {
-	WriteJSON(w, status, map[string]string{"error": message})
-}
-
-func WriteInternalServerError(w http.ResponseWriter) {
-	WriteJSON(w, http.StatusInternalServerError, map[string]string{"error": "Internal server error."})
-}
-
-func WriteServerNotAvailableError(w http.ResponseWriter) {
-	WriteJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "Server not available."})
-}

@@ -28,6 +28,12 @@ type userStore struct {
 
 func NewUserStore() UserStore {
 	//
+	if common.Test {
+		return &userStore{
+			Users: []*model.User{},
+		}
+	}
+	//
 	//
 	host := common.EnvString("DB_HOST", "localhost")
 	port := common.Atoi(common.EnvString("DB_PORT", "5432"), 5432)
