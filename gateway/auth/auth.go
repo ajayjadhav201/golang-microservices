@@ -18,8 +18,9 @@ func NewAuthClient(service api.AuthServiceClient) *AuthClient {
 func (a *AuthClient) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v2/signup", a.SignupHandler)
 	mux.HandleFunc("POST /api/v2/login", a.LoginHandler)
-	mux.HandleFunc("POST /api/v2/setpassword", a.SetPassword)
+	mux.HandleFunc("POST /api/v2/changepassword", a.ChangePassword)
 	mux.HandleFunc("POST /api/v2/updateuser", a.UpdateUserHandler)
+	mux.HandleFunc("POST /api/v2/deleteuser", a.DeleteUser)
 }
 
 //
@@ -36,7 +37,7 @@ func (a *AuthClient) SignupHandler(w http.ResponseWriter, r *http.Request) {
 		common.WriteRequestBodyError(w, err)
 		return
 	}
-	common.Println("ajaj signup request is ", req)
+	//common.Println("ajaj signup request is ", req)
 
 	res, err := a.Client.Signup(r.Context(), req)
 	if err != nil {
@@ -67,10 +68,14 @@ func (a *AuthClient) ForgotPassword() {
 	//
 }
 
-func (a *AuthClient) SetPassword(w http.ResponseWriter, r *http.Request) {
+func (a *AuthClient) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	//
 }
 
 func (a *AuthClient) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
+	//
+}
+
+func (a *AuthClient) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	//
 }

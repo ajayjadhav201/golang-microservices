@@ -1,6 +1,9 @@
 package common
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 func Println(a ...any) {
 	fmt.Println(a...)
@@ -28,4 +31,8 @@ func SPrintln(a ...any) string {
 
 func Errorf(format string, a ...any) error {
 	return fmt.Errorf(format, a...)
+}
+
+func Error(err string) error {
+	return errors.New(err)
 }
