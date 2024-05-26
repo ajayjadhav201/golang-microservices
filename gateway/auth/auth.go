@@ -70,12 +70,48 @@ func (a *AuthClient) ForgotPassword() {
 
 func (a *AuthClient) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	//
+	var req *api.ChangePasswordRequest
+	if err := common.ReadJSON(r, req); err != nil {
+		common.WriteError(w, http.StatusBadRequest, common.UnmarshalFailed)
+		return
+	}
+	res, err := a.Client.ChangePassword(r.Context(), req)
+	if err != nil {
+		common.Println("ajaj chnage password errror is ", err)
+		common.WriteGrpcError(w, err)
+		return
+	}
+	common.WriteJSON(w, http.StatusOK, res)
 }
 
 func (a *AuthClient) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	//
+	var req *api.UpdateUserRequest
+	if err := common.ReadJSON(r, req); err != nil {
+		common.WriteError(w, http.StatusBadRequest, common.UnmarshalFailed)
+		return
+	}
+	res, err := a.Client.UpdateUser(r.Context(), req)
+	if err != nil {
+		common.Println("ajaj updateuser errror is ", err)
+		common.WriteGrpcError(w, err)
+		return
+	}
+	common.WriteJSON(w, http.StatusOK, res)
 }
 
 func (a *AuthClient) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	//
+	var req *api.DeleteUserRequest
+	if err := common.ReadJSON(r, req); err != nil {
+		common.WriteError(w, http.StatusBadRequest, common.UnmarshalFailed)
+		return
+	}
+	res, err := a.Client.DeleteUser(r.Context(), req)
+	if err != nil {
+		common.Println("ajaj deleteuser errror is ", err)
+		common.WriteGrpcError(w, err)
+		return
+	}
+	common.WriteJSON(w, http.StatusOK, res)
 }

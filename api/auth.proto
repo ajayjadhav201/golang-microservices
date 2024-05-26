@@ -7,9 +7,9 @@ package api;
 service AuthService {
     rpc Signup(SignupRequest) returns (SignupResponse);
     rpc Login(LoginRequest) returns (LoginResponse);
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse);
     rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
-    rpc Delete(DeleteUserRequest) returns (DeleteUserResponse);
-
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
 }
 
 message Response{
@@ -58,6 +58,10 @@ message UpdateUserRequest {
     string Country = 9;
     string ZipCode = 10;
     string ProfileImage = 11;
+}
+
+message UpdateUserResponse {
+    Response message    = 1;
 }
 
 message ChangePasswordRequest {
