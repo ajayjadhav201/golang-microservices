@@ -47,17 +47,18 @@ message LoginResponse {
 }
 
 message UpdateUserRequest {
-    string FirstName = 1;
-    string LastName = 2;
-    string Email = 3;
-    string Password = 4;
-    string MobileNumber = 5;
-    string Address = 6;
-    string City = 7;
-    string State = 8;
-    string Country = 9;
-    string ZipCode = 10;
-    string ProfileImage = 11;
+    string UserID       = 1;
+    string FirstName    = 2;
+    string LastName     = 3;
+    string Email        = 4;
+    string Password     = 5;
+    string MobileNumber = 6;
+    string Address      = 7;
+    string City         = 8;
+    string State        = 9;
+    string Country      = 10;
+    string ZipCode      = 11;
+    string ProfileImage = 12;
 }
 
 message UpdateUserResponse {
@@ -65,9 +66,10 @@ message UpdateUserResponse {
 }
 
 message ChangePasswordRequest {
-    string Email        = 1;
-    string OldPassword  = 2;
-    string NewPassword  = 3;
+    string Email                = 1;
+    string OldPassword          = 2;
+    string PasswordResetToken   = 4;
+    string NewPassword          = 5;
 }
 
 message ChangePasswordResponse {

@@ -39,11 +39,11 @@ func WriteError(w http.ResponseWriter, status int, message string) {
 }
 
 func WriteInternalServerError(w http.ResponseWriter) {
-	WriteJSON(w, http.StatusInternalServerError, map[string]string{"error": "Internal server error."})
+	WriteError(w, http.StatusInternalServerError, "Internal server error")
 }
 
 func WriteServerNotAvailableError(w http.ResponseWriter) {
-	WriteJSON(w, http.StatusServiceUnavailable, map[string]string{"error": "Server not available."})
+	WriteError(w, http.StatusInternalServerError, "Server not available.")
 }
 
 func WriteGrpcError(w http.ResponseWriter, err error) {

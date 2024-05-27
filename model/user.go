@@ -7,14 +7,13 @@ import (
 )
 
 type User struct {
-	ID              uint   `gorm:"primaryKey" json:"omitempty"`
-	UserID          string `json:"ID,omitempty"`
+	ID              uint64 `gorm:"primaryKey" json:"ID"`
 	FirstName       string `json:"FirstName,omitempty"`
 	LastName        string `json:"LastName,omitempty"`
 	ProfileImage    string `json:"ProfileImage,omitempty"`
-	Email           string `json:"Email,omitempty"`
+	Email           string `gorm:"unique" json:"Email,omitempty"`
 	Password        string `json:"Password,omitempty"`
-	MobileNumber    string `json:"MobileNumber,omitempty"`
+	MobileNumber    string `gorm:"unique" json:"MobileNumber,omitempty"`
 	Address         string `json:"Address,omitempty"`
 	ShippingAddress string `json:"ShippingAddress,omitempty"`
 	Token           string `json:"Token,omitempty"`

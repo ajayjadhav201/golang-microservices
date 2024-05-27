@@ -2,21 +2,29 @@ package auth
 
 import (
 	"api"
+	"errors"
 	"net/http"
 
 	"github.com/ajayjadhav201/common"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 )
+
+func InitS3Uploader() {
+
+}
 
 type AuthClient struct {
 	Client api.AuthServiceClient
+	aws    *AwsS3Service
 }
 
-func NewAuthClient(service api.AuthServiceClient) *AuthClient {
-	return &AuthClient{service}
+func NewAuthClient(service api.AuthServiceClient, aws *AwsS3Service) *AuthClient {
+	return &AuthClient{service, aws}
 }
 
 func (a *AuthClient) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /api/v2/signup", a.SignupHandler)
+	mux.HandleFunc("POST /api/v2/uploadimage", a.uploadImage)
 	mux.HandleFunc("POST /api/v2/login", a.LoginHandler)
 	mux.HandleFunc("POST /api/v2/changepassword", a.ChangePassword)
 	mux.HandleFunc("POST /api/v2/updateuser", a.UpdateUserHandler)
@@ -37,7 +45,7 @@ func (a *AuthClient) SignupHandler(w http.ResponseWriter, r *http.Request) {
 		common.WriteRequestBodyError(w, err)
 		return
 	}
-	//common.Println("ajaj signup request is ", req)
+	common.Println("ajaj signup request is ", req)
 
 	res, err := a.Client.Signup(r.Context(), req)
 	if err != nil {
@@ -65,7 +73,7 @@ func (a *AuthClient) LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *AuthClient) ForgotPassword() {
-	//
+	// mail sending
 }
 
 func (a *AuthClient) ChangePassword(w http.ResponseWriter, r *http.Request) {
@@ -114,4 +122,59 @@ func (a *AuthClient) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	common.WriteJSON(w, http.StatusOK, res)
+}
+
+// upload profile image
+func (a *AuthClient) uploadImage(w http.ResponseWriter, r *http.Request) {
+	common.Println("request received as ", r.Body)
+	if a.aws == nil {
+		common.WriteError(w, http.StatusServiceUnavailable, "Service not available")
+		return
+	}
+	err := r.ParseMultipartForm(2 << 20)
+	if err != nil {
+		common.WriteError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	form := r.MultipartForm
+	if form == nil {
+		common.WriteError(w, http.StatusBadRequest, "Unable to load form-data")
+		return
+	}
+	//data := form.Value //these are form fileds
+
+	files := form.File
+	if len(files) == 0 {
+		common.WriteError(w, http.StatusBadRequest, "Please upload files")
+		return
+	}
+	common.Println("ajaj files are: ", files)
+
+	var uploadedUrls []string
+
+	for _, file := range files {
+		fileHeaders := file
+		if len(fileHeaders) == 0 {
+			common.Println("ajaj fileheader is empty", fileHeaders)
+			common.WriteError(w, http.StatusInternalServerError, "Unable to read Empty file")
+			return
+		}
+		common.Println("ajaj fileheader is ", fileHeaders[0])
+		url, err := UploadFile(a.aws.Uploader, a.aws.BucketName, fileHeaders[0])
+		//
+		if err != nil {
+			common.Println(" error occured while uploading image", err)
+			var mu manager.MultiUploadFailure
+			if errors.As(err, &mu) {
+				errorid := mu.UploadID() // retrieve the associated UploadID
+				common.WriteError(w, http.StatusInternalServerError, common.Sprintf("Internal Server error: %s", errorid))
+			}
+			common.WriteError(w, http.StatusInternalServerError, common.Sprintf("Internal Server error: %s", err.Error()))
+			return
+		}
+		uploadedUrls = append(uploadedUrls, url)
+	}
+
+	common.WriteJSON(w, http.StatusOK, common.Response{Message: common.Sprintf("Files uploaded successfully. path: %s", uploadedUrls[0])})
+	return
 }

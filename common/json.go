@@ -10,6 +10,10 @@ const (
 	InternalServerErr = "Internal server error"
 )
 
+type Response struct {
+	Message string `json:"message"`
+}
+
 func WriteJSON(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
@@ -36,4 +40,3 @@ func ReadJSON(r *http.Request, pointer any) error {
 	// }
 	// return json.Unmarshal(b, pointer)
 }
-

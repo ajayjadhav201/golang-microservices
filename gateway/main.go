@@ -4,19 +4,19 @@ import (
 	"net/http"
 
 	"github.com/ajayjadhav201/common"
+	"github.com/ajayjadhav201/gateway/auth"
 	"github.com/ajayjadhav201/gateway/cache"
 	"github.com/go-redis/redis"
 	_ "github.com/joho/godotenv/autoload"
 )
 
 var (
-	httpAddr         = common.EnvString("GATEWAY_ADDRESS", ":8080")
-	orderServiceAddr = "localhost:2000"
-	authServiceAddr  = "localhost:2001"
+	httpAddr = common.EnvString("GATEWAY_ADDRESS", ":8080")
 )
 
 // C:\Program Files\protoc-26.1-win64  //protoc path
 func main() {
+	aws := auth.NewAwsS3Service()
 	//Make Http Connection
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -30,11 +30,12 @@ func main() {
 		common.Println("Error connecting to Redis:", err)
 	} else {
 		common.Println("Redis connected:", pong)
+		defer rdb.Close()
 	}
 	//
 	mux := http.NewServeMux()
 	_ = cache.NewCache(rdb) //redis client connection
-	RegisterGrpcClient(mux)
+	RegisterGrpcClient(mux, aws)
 	//
 	//
 	//

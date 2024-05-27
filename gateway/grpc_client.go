@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func RegisterGrpcClient(mux *http.ServeMux) {
+func RegisterGrpcClient(mux *http.ServeMux, aws *auth.AwsS3Service) {
 	creds := grpc.WithTransportCredentials(insecure.NewCredentials())
 	//
 	// orderClient, err := grpc.Dial(orderServiceAddr, creds)
@@ -26,5 +26,5 @@ func RegisterGrpcClient(mux *http.ServeMux) {
 	// NewHandler(pb.NewOrderServiceClient(orderClient)).registerRoutes(mux)
 	//
 	// handle auth client
-	auth.NewAuthClient(api.NewAuthServiceClient(authClient)).RegisterRoutes(mux)
+	auth.NewAuthClient(api.NewAuthServiceClient(authClient), aws).RegisterRoutes(mux)
 }

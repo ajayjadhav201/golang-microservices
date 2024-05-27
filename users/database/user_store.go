@@ -35,7 +35,6 @@ func NewUserStore() UserStore {
 	dbname := common.EnvString("DB_NAME", "database")
 
 	common.Println(user, " connection to db with password: ", password)
-
 	//
 	dsn := common.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})

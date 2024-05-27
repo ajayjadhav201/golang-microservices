@@ -40,7 +40,7 @@ func (s *userService) Signup(ctx context.Context, req *api.SignupRequest) (*api.
 	if err != nil {
 		return nil, err
 	}
-
+	user.ID = common.UniqueID()
 	user.Token = tokn
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = user.CreatedAt
