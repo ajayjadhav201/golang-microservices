@@ -13,7 +13,7 @@ func CreateToken(User string) (string, error) {
 	// Create the token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"authorized": true,
-		"user":       User,
+		"userid":     User,
 		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Token expires in 24 hours
 	})
 

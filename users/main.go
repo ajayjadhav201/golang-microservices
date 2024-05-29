@@ -21,13 +21,14 @@ func main() {
 	common.Panic(err)
 
 	//
-	userStore := database.NewUserStore()
+	// userStore := database.NewUserStore()
+	dynamodb := database.NewDynamoDb()
 
 	grpcServer := grpc.NewServer()
 	l, err := net.Listen("tcp", grpcAddr)
 	common.Fatal(err)
 	defer l.Close()
-	userservice := NewUserService(userStore)
+	userservice := NewUserService(dynamodb) //userStore
 
 	api.RegisterAuthServiceServer(grpcServer, userservice)
 

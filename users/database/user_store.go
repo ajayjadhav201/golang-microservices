@@ -15,7 +15,7 @@ var (
 
 type UserStore interface {
 	CreateUser(user *model.User) (string, error)
-	GetUsers() *[]model.User
+	GetUsers() []*model.User
 	GetUserById(id string) (*model.User, error)
 	UpdateUser(id string, user *model.User) (*model.User, error)
 	DeleteUser(id string) error
@@ -62,7 +62,7 @@ func (s *userStore) CreateUser(user *model.User) (string, error) {
 	return "user created", nil
 }
 
-func (s *userStore) GetUsers() *[]model.User {
+func (s *userStore) GetUsers() []*model.User {
 	//
 	return nil
 }

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/ajayjadhav201/common"
@@ -11,13 +12,21 @@ import (
 func AuthMiddleware(next http.Handler) http.Handler {
 	//
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tokenString := r.Header.Get("Authorization")
-		if tokenString == "" {
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
-		_, err := ValidateToken(tokenString)
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			http.Error(w, "Invalid Authorization header format", http.StatusUnauthorized)
+			return
+		}
+
+		token := parts[1]
+		// Validate the token (e.g., using a JWT library)
+		_, err := ValidateToken(token)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			return

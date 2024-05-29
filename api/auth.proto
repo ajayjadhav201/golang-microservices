@@ -33,6 +33,7 @@ message SignupRequest {
 
 message SignupResponse {
     string Message = 1;
+    UpdateUserRequest data = 3;
     string Token = 2;
 }
 
@@ -63,6 +64,7 @@ message UpdateUserRequest {
 
 message UpdateUserResponse {
     Response message    = 1;
+    
 }
 
 message ChangePasswordRequest {
@@ -83,4 +85,19 @@ message DeleteUserRequest {
 
 message DeleteUserResponse {
     Response Message    = 1;
+}
+
+message UserDetails {
+    string UserID       = 1;
+    string FirstName    = 2;
+    string LastName     = 3;
+    string Email        = 4;
+    string Password     = 5;
+    string MobileNumber = 6;
+    string Address      = 7;
+    string City         = 8;
+    string State        = 9;
+    string Country      = 10;
+    string ZipCode      = 11;
+    string ProfileImage = 12; 
 }

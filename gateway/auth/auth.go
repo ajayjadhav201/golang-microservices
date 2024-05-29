@@ -7,11 +7,8 @@ import (
 
 	"github.com/ajayjadhav201/common"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/gin-gonic/gin"
 )
-
-func InitS3Uploader() {
-
-}
 
 type AuthClient struct {
 	Client api.AuthServiceClient
@@ -22,13 +19,13 @@ func NewAuthClient(service api.AuthServiceClient, aws *AwsS3Service) *AuthClient
 	return &AuthClient{service, aws}
 }
 
-func (a *AuthClient) RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("POST /api/v2/signup", a.SignupHandler)
-	mux.HandleFunc("POST /api/v2/uploadimage", a.uploadImage)
-	mux.HandleFunc("POST /api/v2/login", a.LoginHandler)
-	mux.HandleFunc("POST /api/v2/changepassword", a.ChangePassword)
-	mux.HandleFunc("POST /api/v2/updateuser", a.UpdateUserHandler)
-	mux.HandleFunc("POST /api/v2/deleteuser", a.DeleteUser)
+func (a *AuthClient) RegisterRoutes(r *gin.RouterGroup) {
+	// mux.HandleFunc("POST /api/v2/signup", a.SignupHandler)
+	// mux.HandleFunc("POST /api/v2/uploadimage", a.uploadImage)
+	// mux.HandleFunc("POST /api/v2/login", a.LoginHandler)
+	// mux.HandleFunc("POST /api/v2/changepassword", a.ChangePassword)
+	// mux.HandleFunc("POST /api/v2/updateuser", a.UpdateUserHandler)
+	// mux.HandleFunc("POST /api/v2/deleteuser", a.DeleteUser)
 }
 
 //

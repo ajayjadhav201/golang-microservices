@@ -30,7 +30,6 @@ func NewAwsS3Service() *AwsS3Service {
 	// 	panic(err)
 	// }
 	// Create an Amazon S3 service client
-	common.Println("ajaj bucketname is ", bucketName)
 	client := s3.New(
 		s3.Options{
 			Region: region,
@@ -68,6 +67,6 @@ func UploadFile(Uploader *manager.Uploader, BucketName string, fileHeader *multi
 	if err != nil {
 		return "", err
 	}
-	url := common.Sprintf("https://%s.s3.amazonaws.com/%s", BucketName, fileHeader.Filename)
-	return url, nil
+	// url := common.Sprintf("https://%s.s3.amazonaws.com/%s", BucketName, fileHeader.Filename)
+	return fileHeader.Filename, nil
 }

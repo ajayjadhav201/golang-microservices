@@ -3,6 +3,7 @@ package common
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"strconv"
 	"time"
 
@@ -13,22 +14,42 @@ const (
 	Test bool = true
 )
 
+func EnvString(Key string, option string) string {
+	val := os.Getenv(Key)
+	if val != "" {
+		return val
+	}
+	return option
+}
+
 func NewUUID() string {
 	return uuid.New().String()
 }
 
 // generateUniqueID generates a unique ID by combining milliseconds since epoch
 // and a 6-digit random string.
-func UniqueID() uint64 {
-	// Get current time in milliseconds since the epoch
-	millis := uint64(time.Now().UnixNano() / int64(time.Millisecond))
-
+func UniqueID() int64 {
 	// Generate a 6-digit random number
-	rand.Seed(time.Now().UnixNano())       // Seed the random number generator
-	randomNum := rand.Intn(90000) + 100000 // Generates a random integer between 100000 and 999999
+	randomNum := rand.Intn(9000) + 10000 // Generates a random integer between 100000 and 999999
 
 	// Concatenate milliseconds and random number
-	uniqueID, _ := strconv.ParseUint(fmt.Sprintf("%d%06d", millis, randomNum), 10, 64)
+	uniqueID, _ := strconv.ParseUint(fmt.Sprintf("%d%06d", time.Now().UnixMilli(), randomNum), 10, 64)
 
-	return uniqueID
+	return int64(uniqueID)
+}
+
+func Int64toa(i int64) string {
+	return strconv.FormatInt(i, 10)
+}
+
+func Itoa(i int) string {
+	return strconv.Itoa(i)
+}
+
+func Atoi(s string, defVal ...int) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return defVal[0]
+	}
+	return i
 }

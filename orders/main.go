@@ -23,7 +23,7 @@ func main() {
 	//
 	store := NewStore()
 	svc := NewService(store) //this is for connection with database
-	NewGrpcHandler(grpcServer)
+	// NewGrpcHandler(grpcServer)
 
 	svc.CreateOrder(context.Background())
 	common.Println("Order service is started on: ", grpcAddr)
