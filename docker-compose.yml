@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+  user-service:
+    build: ./services/user-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+  product-service:
+    build: ./services/product-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+  order-service:
+    build: ./services/order-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres
+  payment-service:
+    build: ./services/payment-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"

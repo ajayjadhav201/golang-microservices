@@ -9,8 +9,19 @@
 *.dylib
 *.env
 .env
-gateway/*.env
-gateway/.env
+api-gateway/*.env
+api-gateway/.env
+services/user-service/*.env
+services/user-service/.env
+# 
+services/product-service/*.env
+services/product-service/.env
+# 
+services/payment-service/*.env
+services/payment-service/.env
+# 
+services/order-service/*.env
+services/order-service/.env
 
 # Test binary, built with `go test -c`
 *.test

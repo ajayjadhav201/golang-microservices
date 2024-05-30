@@ -1,4 +1,4 @@
-module github.com/ajayjadhav201/common
+module golang-microservices/common
 
 go 1.22.2
 
