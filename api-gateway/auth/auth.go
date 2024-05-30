@@ -2,7 +2,7 @@ package auth
 
 import (
 	"errors"
-	"golang-microservices/api"
+	"golang-microservices/api/pb"
 	"net/http"
 
 	"golang-microservices/common"
@@ -12,21 +12,21 @@ import (
 )
 
 type AuthClient struct {
-	Client api.AuthServiceClient
+	Client pb.AuthServiceClient
 	aws    *AwsS3Service
 }
 
-func NewAuthClient(service api.AuthServiceClient, aws *AwsS3Service) *AuthClient {
+func NewAuthClient(service pb.AuthServiceClient, aws *AwsS3Service) *AuthClient {
 	return &AuthClient{service, aws}
 }
 
 func (a *AuthClient) RegisterRoutes(r *gin.RouterGroup) {
-	// mux.HandleFunc("POST /api/v2/signup", a.SignupHandler)
-	// mux.HandleFunc("POST /api/v2/uploadimage", a.uploadImage)
-	// mux.HandleFunc("POST /api/v2/login", a.LoginHandler)
-	// mux.HandleFunc("POST /api/v2/changepassword", a.ChangePassword)
-	// mux.HandleFunc("POST /api/v2/updateuser", a.UpdateUserHandler)
-	// mux.HandleFunc("POST /api/v2/deleteuser", a.DeleteUser)
+	// mux.HandleFunc("POST /pb/v2/signup", a.SignupHandler)
+	// mux.HandleFunc("POST /pb/v2/uploadimage", a.uploadImage)
+	// mux.HandleFunc("POST /pb/v2/login", a.LoginHandler)
+	// mux.HandleFunc("POST /pb/v2/changepassword", a.ChangePassword)
+	// mux.HandleFunc("POST /pb/v2/updateuser", a.UpdateUserHandler)
+	// mux.HandleFunc("POST /pb/v2/deleteuser", a.DeleteUser)
 }
 
 //
@@ -37,7 +37,7 @@ func (a *AuthClient) RegisterRoutes(r *gin.RouterGroup) {
 
 // Signup
 func (a *AuthClient) SignupHandler(w http.ResponseWriter, r *http.Request) {
-	req := &api.SignupRequest{}
+	req := &pb.SignupRequest{}
 	if err := common.ReadJSON(r, req); err != nil {
 		common.Println("ajaj error while parsing json", err.Error())
 		common.WriteRequestBodyError(w, err)
@@ -56,7 +56,7 @@ func (a *AuthClient) SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 // Login
 func (a *AuthClient) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	var req *api.LoginRequest
+	var req *pb.LoginRequest
 	if err := common.ReadJSON(r, req); err != nil {
 		common.WriteError(w, http.StatusBadRequest, common.UnmarshalFailed)
 		return
@@ -76,7 +76,7 @@ func (a *AuthClient) ForgotPassword() {
 
 func (a *AuthClient) ChangePassword(w http.ResponseWriter, r *http.Request) {
 	//
-	var req *api.ChangePasswordRequest
+	var req *pb.ChangePasswordRequest
 	if err := common.ReadJSON(r, req); err != nil {
 		common.WriteError(w, http.StatusBadRequest, common.UnmarshalFailed)
 		return
@@ -92,7 +92,7 @@ func (a *AuthClient) ChangePassword(w http.ResponseWriter, r *http.Request) {
 
 func (a *AuthClient) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	//
-	var req *api.UpdateUserRequest
+	var req *pb.UpdateUserRequest
 	if err := common.ReadJSON(r, req); err != nil {
 		common.WriteError(w, http.StatusBadRequest, common.UnmarshalFailed)
 		return
@@ -108,7 +108,7 @@ func (a *AuthClient) UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 func (a *AuthClient) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	//
-	var req *api.DeleteUserRequest
+	var req *pb.DeleteUserRequest
 	if err := common.ReadJSON(r, req); err != nil {
 		common.WriteError(w, http.StatusBadRequest, common.UnmarshalFailed)
 		return

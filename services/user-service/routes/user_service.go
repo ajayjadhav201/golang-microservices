@@ -2,7 +2,7 @@ package routes
 
 import (
 	"context"
-	"golang-microservices/api"
+	"golang-microservices/api/pb"
 	"golang-microservices/common"
 
 	"time"
@@ -14,12 +14,12 @@ import (
 )
 
 type UserService interface {
-	Signup(context.Context, *api.SignupRequest) (*api.SignupResponse, error)
-	// Login(context.Context, *api.LoginRequest) (*api.LoginResponse, error)
+	Signup(context.Context, *pb.SignupRequest) (*pb.SignupResponse, error)
+	// Login(context.Context, *pb.LoginRequest) (*pb.LoginResponse, error)
 }
 
 type userService struct {
-	api.UnimplementedAuthServiceServer
+	pb.UnimplementedAuthServiceServer
 	db database.UserStore
 }
 
@@ -29,7 +29,7 @@ func NewUserService(store database.UserStore) *userService {
 	}
 }
 
-func (s *userService) Signup(ctx context.Context, req *api.SignupRequest) (*api.SignupResponse, error) {
+func (s *userService) Signup(ctx context.Context, req *pb.SignupRequest) (*pb.SignupResponse, error) {
 	common.Println("ajaj signup request received email: ", req.Email, " and mobile number: ", req.MobileNumber)
 	user := model.NewUser()
 
@@ -55,12 +55,12 @@ func (s *userService) Signup(ctx context.Context, req *api.SignupRequest) (*api.
 	}
 
 	// returning success result
-	return &api.SignupResponse{
+	return &pb.SignupResponse{
 		Message: "user created successfully",
 		Token:   id,
 	}, nil
 }
 
-func (s *userService) Login(ctx context.Context, req *api.LoginRequest) (*api.LoginResponse, error) {
+func (s *userService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	return nil, nil
 }

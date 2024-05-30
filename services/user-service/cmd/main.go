@@ -1,7 +1,7 @@
 package main
 
 import (
-	"golang-microservices/api"
+	"golang-microservices/api/pb"
 	"golang-microservices/common"
 	"net"
 	"user-service/database"
@@ -31,7 +31,7 @@ func main() {
 	defer l.Close()
 	userservice := routes.NewUserService(dynamodb) //userStore  //final
 
-	api.RegisterAuthServiceServer(grpcServer, userservice) //final
+	pb.RegisterAuthServiceServer(grpcServer, userservice) //final
 
 	common.Println("Auth service is started on: ", grpcAddr)
 	common.Fatal(grpcServer.Serve(l))

@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package product;
+
+service ProductService {
+    rpc CreatePrododuct(CreateProductRequest) returns (CreateProductResponse); 
+    rpc GetProducts(GetProductsRequest) returns (GetProductsResponse);
+    rpc UpdateProduct(UpdateProductRequest) returns (UpdateProductResponse);
+    rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
+}
+
+message Product{
+    string Name             = 1;
+    string Brand            = 2;
+    string Category         = 3;
+    repeated string Images  = 4;
+}
+
+
+message GetProductsRequest{
+
+}
+message GetProductsResponse{
+
+}
+
+message CreateProductRequest{
+
+}
+
+message CreateProductResponse{
+    
+}
+
+message UpdateProductRequest{
+
+}
+
+message UpdateProductResponse{
+
+}
+
+message DeleteProductRequest{
+
+}
+
+message DeleteProductResponse{
+
+}
