@@ -16,6 +16,7 @@ const (
 
 func EnvString(Key string, option string) string {
 	val := os.Getenv(Key)
+	// val := GetSecret(Key)
 	if val != "" {
 		return val
 	}

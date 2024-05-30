@@ -9,6 +9,7 @@
 *.dylib
 *.env
 .env
+# common/secrets.go
 api-gateway/*.env
 api-gateway/.env
 services/user-service/*.env

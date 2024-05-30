@@ -1,8 +1,6 @@
 package common
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
@@ -73,7 +71,7 @@ func GetCookie(r *http.Request, Key string, DefaultValue string) string {
 	return c.Value
 }
 
-func validateRefererAndOrigin(w http.ResponseWriter, r *http.Request) {
+func ValidateRefererAndOrigin(w http.ResponseWriter, r *http.Request) {
 	referer := r.Header.Get("Referer")
 	origin := r.Header.Get("Origin")
 
@@ -89,31 +87,7 @@ func validateRefererAndOrigin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintln(w, "Referer and Origin validated successfully")
-}
-
-func Fatal(err error, s ...string) {
-	if err != nil {
-		if len(s) == 0 {
-			log.Fatal(err)
-		} else {
-			log.Fatal(s)
-		}
-	}
-}
-
-func Fatalf(format string, v ...any) {
-	log.Fatalf(format, v...)
-}
-
-func Panic(err error, s ...string) {
-	if err != nil {
-		if len(s) == 0 {
-			panic(err)
-		} else {
-			panic(s)
-		}
-	}
+	// fmt.Fprintln(w, "Referer and Origin validated successfully")
 }
 
 func WriteError(w http.ResponseWriter, status int, message string) {

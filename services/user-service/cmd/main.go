@@ -20,6 +20,7 @@ func main() {
 	//
 	err := godotenv.Load(".env")
 	common.Panic(err)
+	common.Println("ajaj en: AWS_ACCESS_KEY: ", common.EnvString("AWS_SECRET_KEY", ""))
 
 	//
 	// userStore := database.NewUserStore()

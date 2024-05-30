@@ -3,20 +3,27 @@
 hello:
 	@echo "welcome to golang-microservices project"
 
+
+# api-gateway commands
 api_gateway:
 	go run ./api-gateway/cmd/main.go
+#  go get ${P}
 
+# user-service commands
 user_service:
-	go run ./services/user_service/cmd/main.go
+	go run ./services/user-service/cmd/main.go
 
+# product-service commands
 product_service:
-	go run ./services/product_service/cmd/main.go
+	go run ./services/product-service/cmd/main.go
 
+# order-service commands
 order_service:
-	go run ./services/order_service/cmd/main.go
+	go run ./services/order-service/cmd/main.go
 
+# payment-service commands
 payment_service:
-	go run ./services/payment_service/cmd/main.go
+	go run ./services/payment-service/cmd/main.go
 
 
 
