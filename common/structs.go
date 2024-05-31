@@ -35,6 +35,9 @@ func MergeStructs[T any](dest, src *T) {
 
 	for i := 0; i < srcVal.NumField(); i++ {
 		srcField := srcVal.Field(i)
+		//
+		// Println("ajaj kind: ", srcField.Kind(), " and data is: ", srcField, " can set: ", srcField.CanSet())
+		//
 		if !isEmptyValue(srcField) {
 			destVal.Field(i).Set(srcField)
 		}
@@ -43,7 +46,6 @@ func MergeStructs[T any](dest, src *T) {
 
 // isEmptyValue checks if a reflect.Value is empty (zero value)
 func isEmptyValue(v reflect.Value) bool {
-	Println("ajaj kind: ", v.Kind())
 	switch v.Kind() {
 	case reflect.String, reflect.Array, reflect.Slice, reflect.Map, reflect.Chan:
 		return v.Len() == 0
@@ -57,6 +59,8 @@ func isEmptyValue(v reflect.Value) bool {
 		return v.Float() == 0
 	case reflect.Interface, reflect.Ptr:
 		return v.IsNil()
+	case reflect.Struct:
+		return true
 	}
 	return false
 }

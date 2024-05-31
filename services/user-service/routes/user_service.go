@@ -77,7 +77,7 @@ func (s *userService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Logi
 	// }
 	common.Println("ajaj login request with email:", req.EmailorMobile, " and password: ", req.Password)
 	// find user in database
-	user, err := s.db.GetUserById(req.EmailorMobile)
+	user, err := s.db.GetUserByEmailorMobile(req.EmailorMobile)
 	if err != nil {
 		return nil, err
 	}
@@ -99,11 +99,22 @@ func (s *userService) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 
 	err := common.Copy(req.User, user)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "Unable to read request body")
+		return nil, common.Error("Unable to read request body")
 	}
 	user.ID = int64(common.Atoi(req.UserID))
+	user.UpdatedAt = time.Now()
+	updatedUser, err := s.db.UpdateUser(req.UserID, user)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+	common.Println("updated user is: ", updatedUser)
+
+	return &pb.UpdateUserResponse{
+		Message: "User updated successfully.",
+		Token:   "na",
+		User:    req.User,
+	}, nil
 }
 
 //

@@ -18,6 +18,7 @@ type UserStore interface {
 	CreateUser(user *model.User) (string, error)
 	GetUsers() []*model.User
 	GetUserById(id string) (*model.User, error)
+	GetUserByEmailorMobile(emailorMobile string) (*model.User, error)
 	UpdateUser(id string, user *model.User) (*model.User, error)
 	DeleteUser(id string) error
 }
@@ -27,7 +28,7 @@ type userStore struct {
 	DB    *gorm.DB
 }
 
-func NewUserStore() UserStore {
+func NewUserStore() *userStore {
 	//
 	host := common.EnvString("DB_HOST", "localhost")
 	port := common.Atoi(common.EnvString("DB_PORT", "5432"), 5432)

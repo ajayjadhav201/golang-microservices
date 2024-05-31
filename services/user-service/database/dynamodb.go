@@ -243,12 +243,16 @@ func (db *DynamoDb) Create(TableName string, entity interface{}, email string, m
 	}
 	return db.Client.PutItem(context.TODO(), input)
 }
+
 func (db *DynamoDb) Update(TableName string, entity interface{}) (*dynamodb.PutItemOutput, error) {
 	//
 	entityParsed, err := attributevalue.MarshalMap(entity)
 	if err != nil {
 		return nil, err
 	}
+	common.Println("ajaj entity is: ", entity)
+	mail := entityParsed["Email"]
+	common.Println("ajaj email value is :", mail)
 	input := &dynamodb.PutItemInput{
 		Item:      entityParsed,
 		TableName: aws.String(TableName),
@@ -337,15 +341,38 @@ func (db *DynamoDb) GetUsers() []*model.User {
 }
 
 func (db *DynamoDb) GetUserById(id string) (*model.User, error) {
+	//id in database is int so convert string to int
+	intid := common.Atoi(id)
+	if intid == -1 {
+		return nil, common.Error("Invalid id")
+	}
 
+	response, err := db.FindOne("users", map[string]interface{}{"ID": intid})
+
+	if isResourceNotFoundException(err) {
+		return nil, common.Error("User is not registered.")
+	}
+	if err != nil {
+		return nil, err
+	}
+	//
 	user := &model.User{}
+	err = attributevalue.UnmarshalMap(response.Item, user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (db *DynamoDb) GetUserByEmailorMobile(emailorMobile string) (*model.User, error) {
+
 	var response *dynamodb.QueryOutput
 	var err error
 
-	if common.IsEmail(id) {
-		response, err = db.QueryEmail("users", id)
-	} else if common.IsMobileNumber(id) {
-		response, err = db.QueryMobileNumber("users", id)
+	if common.IsEmail(emailorMobile) {
+		response, err = db.QueryEmail("users", emailorMobile)
+	} else if common.IsMobileNumber(emailorMobile) {
+		response, err = db.QueryMobileNumber("users", emailorMobile)
 	} else {
 		return nil, common.Error("Please enter a valid mobile or email")
 	}
@@ -359,6 +386,7 @@ func (db *DynamoDb) GetUserById(id string) (*model.User, error) {
 		return nil, common.Error("User is not registered.")
 	}
 	//
+	user := &model.User{}
 	err = attributevalue.UnmarshalMap(response.Items[0], user)
 	if err != nil {
 		return nil, err
@@ -367,7 +395,36 @@ func (db *DynamoDb) GetUserById(id string) (*model.User, error) {
 }
 
 func (db *DynamoDb) UpdateUser(id string, user *model.User) (*model.User, error) {
-	return nil, nil
+	// get previous user data
+	common.Println("ajaj updateuserdtat is id: ", id, " and user is: ", user)
+	u, err := db.GetUserById(id)
+	if err != nil {
+		return nil, err
+	}
+	if isResourceNotFoundException(err) {
+		return nil, common.Error("User is not registered.")
+	}
+	// merge data from latest to previous struct
+	created := u.CreatedAt
+	common.Println("ajaj in db previous user is: ", u)
+	common.MergeStructs(u, user)
+	u.CreatedAt = created
+	//
+	response, err := db.Update("users", u)
+	if err != nil {
+		return nil, err
+	}
+	// if len(response.Attributes) == 0 {
+	// 	return nil, common.Error("User is not registered.")
+	// }
+	updatedUser := &model.User{}
+	err = attributevalue.UnmarshalMap(response.Attributes, updatedUser)
+	if err != nil {
+		common.Println("ajaj error while unmarshaling json: ", err.Error())
+		return nil, err
+	}
+
+	return updatedUser, nil
 }
 
 func (db *DynamoDb) DeleteUser(id string) error {

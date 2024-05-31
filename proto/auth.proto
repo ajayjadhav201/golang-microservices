@@ -43,7 +43,9 @@ message UpdateUserRequest {
 }
 
 message UpdateUserResponse {
-    Response message    = 1;
+    string Message = 1;
+    string Token = 2;
+    UserDetails User = 3;
     
 }
 

@@ -50,6 +50,9 @@ func Itoa(i int) string {
 func Atoi(s string, defVal ...int) int {
 	i, err := strconv.Atoi(s)
 	if err != nil {
+		if len(defVal) == 0 {
+			return -1
+		}
 		return defVal[0]
 	}
 	return i

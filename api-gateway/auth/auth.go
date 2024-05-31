@@ -100,6 +100,7 @@ func (a *AuthClient) UpdateUserHandler(c *gin.Context) {
 		common.WriteError(c, http.StatusBadRequest, "update user error")
 	}
 	common.Println("ajaj request user id is: ", userid)
+	common.Printf("ajaj request user id type is : %T \n", userid)
 	//validate request
 	req := &pb.UpdateUserRequest{}
 	if err := common.ReadJSON(c, req); err != nil {

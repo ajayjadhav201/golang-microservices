@@ -1,9 +1,8 @@
 package model
 
 import (
-	"time"
-
 	"golang-microservices/common"
+	"time"
 )
 
 /*
@@ -27,18 +26,18 @@ type SignupRequest struct {
 */
 
 type User struct {
-	ID              int64  `gorm:"primaryKey" json:"ID"`
-	FirstName       string `json:"FirstName,omitempty"`
-	LastName        string `json:"LastName,omitempty"`
-	ProfileImage    string `json:"ProfileImage,omitempty"`
-	Email           string `gorm:"unique" json:"Email,omitempty"`
-	Password        string `json:"Password,omitempty"`
-	MobileNumber    string `gorm:"unique" json:"MobileNumber,omitempty"`
-	Address         string `json:"Address,omitempty"`
-	ShippingAddress string `json:"ShippingAddress,omitempty"`
-	Token           string `json:"Token,omitempty"`
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
+	ID              int64     `gorm:"primaryKey" json:"ID"`
+	FirstName       string    `json:"FirstName,omitempty"`
+	LastName        string    `json:"LastName,omitempty"`
+	ProfileImage    string    `json:"ProfileImage,omitempty"`
+	Email           string    `gorm:"unique" json:"Email,omitempty"`
+	Password        string    `json:"Password,omitempty"`
+	MobileNumber    string    `gorm:"unique" json:"MobileNumber,omitempty"`
+	Address         string    `json:"Address,omitempty"`
+	ShippingAddress string    `json:"ShippingAddress,omitempty"`
+	Token           string    `json:"Token,omitempty"`
+	CreatedAt       time.Time `json:"CreatedAt,omitempty"`
+	UpdatedAt       time.Time `json:"UpdatedAt,omitempty"`
 	// DeletedAt       *time.Time `gorm:"index"`
 }
 
