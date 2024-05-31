@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -90,19 +91,19 @@ func ValidateRefererAndOrigin(w http.ResponseWriter, r *http.Request) {
 	// fmt.Fprintln(w, "Referer and Origin validated successfully")
 }
 
-func WriteError(w http.ResponseWriter, status int, message string) {
-	WriteJSON(w, status, map[string]string{"error": message})
+func WriteError(c *gin.Context, status int, message string) {
+	WriteJSON(c, status, map[string]string{"error": message})
 }
 
-func WriteInternalServerError(w http.ResponseWriter) {
-	WriteError(w, http.StatusInternalServerError, "Internal server error")
+func WriteInternalServerError(c *gin.Context) {
+	WriteError(c, http.StatusInternalServerError, "Internal server error")
 }
 
-func WriteServerNotAvailableError(w http.ResponseWriter) {
-	WriteError(w, http.StatusInternalServerError, "Server not available.")
+func WriteServerNotAvailableError(c *gin.Context) {
+	WriteError(c, http.StatusInternalServerError, "Server not available.")
 }
 
-func WriteGrpcError(w http.ResponseWriter, err error) {
+func WriteGrpcError(c *gin.Context, err error) {
 	if err == nil {
 		return
 	}
@@ -111,17 +112,17 @@ func WriteGrpcError(w http.ResponseWriter, err error) {
 		// Extract the gRPC status code
 		grpcCode := st.Code()
 		if grpcCode == codes.Unavailable {
-			WriteServerNotAvailableError(w)
+			WriteServerNotAvailableError(c)
 		} else {
-			WriteError(w, http.StatusBadRequest, err.Error())
+			WriteError(c, http.StatusBadRequest, err.Error())
 		}
 	} else {
-		WriteError(w, http.StatusBadRequest, err.Error())
+		WriteError(c, http.StatusBadRequest, err.Error())
 	}
 
 }
 
-func WriteRequestBodyError(w http.ResponseWriter, err error) {
+func WriteRequestBodyError(c *gin.Context, err error) {
 	//create custom error messages here
 	if strings.Contains(err.Error(), "Key") {
 		newerr := ""
@@ -148,14 +149,14 @@ func WriteRequestBodyError(w http.ResponseWriter, err error) {
 
 		}
 		if len(newerr) < 1 {
-			WriteError(w, http.StatusBadRequest, InvalidReqBody)
+			WriteError(c, http.StatusBadRequest, InvalidReqBody)
 		} else {
-			WriteError(w, http.StatusBadRequest, newerr)
+			WriteError(c, http.StatusBadRequest, newerr)
 		}
 		// return errors.New(newerr)
 	} else if strings.Contains(err.Error(), "EOF") {
-		WriteError(w, http.StatusBadRequest, InvalidReqBody)
+		WriteError(c, http.StatusBadRequest, InvalidReqBody)
 	} else {
-		WriteError(w, http.StatusBadRequest, InvalidReqBody)
+		WriteError(c, http.StatusBadRequest, InvalidReqBody)
 	}
 }

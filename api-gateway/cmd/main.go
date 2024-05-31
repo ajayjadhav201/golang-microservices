@@ -9,20 +9,24 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
+	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 var (
-	httpAddr = common.EnvString("GATEWAY_ADDRESS", ":8080")
+	httpAddr = common.EnvString("GATEWAY_ADDRESS", "localhost:8080")
 )
 
 // C:\Program Files\protoc-26.1-win64  //protoc path
 func main() {
+	err := godotenv.Load(".env")
+	common.Panic(err)
+	//
 	aws := auth.NewAwsS3Service()
 	redis, err := RedisClient()
-	if err != nil {
+	if err == nil {
 		defer redis.Close()
 	}
 
@@ -43,7 +47,7 @@ func AuthService(r *gin.Engine, aws *auth.AwsS3Service) {
 	GrpcAuthClient, err := grpc.NewClient("localhost:2001", creds)
 	common.Fatal(err)
 	GrpcAuthConnection := pb.NewAuthServiceClient(GrpcAuthClient)
-	authGroup := r.Group("/api/v2/auth") // authgroup
+	authGroup := r.Group("/api/v2/") // authgroup
 	authClient := auth.NewAuthClient(GrpcAuthConnection, aws)
 	authClient.RegisterRoutes(authGroup)
 }

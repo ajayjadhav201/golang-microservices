@@ -2,7 +2,8 @@ package common
 
 import (
 	"encoding/json"
-	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 const (
@@ -14,19 +15,22 @@ type Response struct {
 	Message string `json:"message"`
 }
 
-func WriteJSON(w http.ResponseWriter, status int, data any) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(data)
+func WriteJSON(c *gin.Context, status int, data any) {
+	// w.Header().Set("Content-Type", "application/json")
+	// w.WriteHeader(status)
+	// json.NewEncoder(w).Encode(data)
+	c.JSON(status, data)
 }
 
-func ReadJSON(r *http.Request, pointer any) error {
-	err := json.NewDecoder(r.Body).Decode(pointer)
+func ReadJSON(c *gin.Context, pointer any) error {
+	err := json.NewDecoder(c.Request.Body).Decode(pointer)
 	if err != nil {
+		Println("ajaj readjson first error: ", err.Error())
 		return err
 	}
 	err = validate.Struct(pointer)
 	if err != nil {
+		Println("ajaj readjson first error: ", err.Error())
 		return err
 	}
 	return nil
