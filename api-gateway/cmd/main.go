@@ -24,7 +24,7 @@ func main() {
 	err := godotenv.Load(".env")
 	common.Panic(err)
 	//
-	aws := auth.NewAwsS3Service()
+	// aws := auth.NewAwsS3Service()
 	redis, err := RedisClient()
 	if err == nil {
 		defer redis.Close()
@@ -34,7 +34,7 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	//
-	AuthService(r, aws)
+	AuthService(r, nil) //here pass aws s3 service
 	ProductService(r)
 	//
 	common.Println("Http Server started on: ", httpAddr)

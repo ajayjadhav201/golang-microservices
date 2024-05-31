@@ -107,19 +107,19 @@ func WriteGrpcError(c *gin.Context, err error) {
 	if err == nil {
 		return
 	}
-	// Check if the error is a gRPC status error
-	if st, ok := status.FromError(err); ok {
-		// Extract the gRPC status code
-		grpcCode := st.Code()
-		if grpcCode == codes.Unavailable {
-			WriteServerNotAvailableError(c)
-		} else {
-			WriteError(c, http.StatusBadRequest, err.Error())
-		}
-	} else {
+	// Check if the error is a gRPC status
+	st, _ := status.FromError(err)
+	//
+	switch st.Code() {
+	case codes.Unavailable:
+		WriteServerNotAvailableError(c)
+	case codes.Unknown:
+		WriteError(c, http.StatusBadRequest, st.Message())
+	default:
 		WriteError(c, http.StatusBadRequest, err.Error())
 	}
 
+	//
 }
 
 func WriteRequestBodyError(c *gin.Context, err error) {

@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"errors"
-	"net/http"
 	"user-service/model"
 
 	"golang-microservices/common"
@@ -20,29 +19,7 @@ type DynamoDb struct {
 	health bool
 }
 
-type response struct {
-	Status int         `json:"status"`
-	Result interface{} `json:"message"`
-}
-
-func NewResult() *response {
-	return &response{}
-}
-
-func (r *response) bytes() []byte {
-	//
-	return []byte{}
-}
-
-func (r *response) string() string {
-	return ""
-}
-
-func (r *response) sendResponse(w http.ResponseWriter, req *http.Request) {
-
-}
-
-func NewDynamoDb() *DynamoDb {
+func NewDynamoDb() UserStore {
 	region := common.EnvString("AWS_REGION", "")
 	accessKey := common.EnvString("AWS_ACCESS_KEY", "")
 	secretKey := common.EnvString("AWS_SECRET_KEY", "")
@@ -130,7 +107,7 @@ func createTable(client *dynamodb.Client) {
 					},
 				},
 				Projection: &types.Projection{
-					ProjectionType: types.ProjectionTypeKeysOnly,
+					ProjectionType: types.ProjectionTypeAll,
 				},
 				ProvisionedThroughput: &types.ProvisionedThroughput{
 					ReadCapacityUnits:  aws.Int64(5),
@@ -146,7 +123,7 @@ func createTable(client *dynamodb.Client) {
 					},
 				},
 				Projection: &types.Projection{
-					ProjectionType: types.ProjectionTypeKeysOnly,
+					ProjectionType: types.ProjectionTypeAll,
 				},
 				ProvisionedThroughput: &types.ProvisionedThroughput{
 					ReadCapacityUnits:  aws.Int64(5),
@@ -179,39 +156,45 @@ func isResourceNotFoundException(err error) bool {
 
 func (db *DynamoDb) isUserExists(email string, mobileNumber string) (int, error) {
 	count := 0
-	emailQueryInput := &dynamodb.QueryInput{
-		TableName:              aws.String("users"),
-		IndexName:              aws.String("EmailIndex"),
-		KeyConditionExpression: aws.String("Email = :email"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":email": &types.AttributeValueMemberS{Value: email},
-		},
+
+	// check email is registered
+	if email != "" {
+		emailQueryInput := &dynamodb.QueryInput{
+			TableName:              aws.String("users"),
+			IndexName:              aws.String("EmailIndex"),
+			KeyConditionExpression: aws.String("Email = :email"),
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":email": &types.AttributeValueMemberS{Value: email},
+			},
+		}
+		emailResult, err := db.Client.Query(context.TODO(), emailQueryInput)
+		if err != nil {
+			return count, err
+		}
+
+		if len(emailResult.Items) > 0 {
+			count = count + 1
+		}
+
 	}
 
-	mobileQueryInput := &dynamodb.ScanInput{
-		TableName:        aws.String("users"),
-		FilterExpression: aws.String("MobileNumber = :mobileNumber"),
-		ExpressionAttributeValues: map[string]types.AttributeValue{
-			":mobileNumber": &types.AttributeValueMemberS{Value: mobileNumber},
-		},
-	}
+	// check mobile number is registered
+	if mobileNumber != "" {
+		mobileQueryInput := &dynamodb.ScanInput{
+			TableName:        aws.String("users"),
+			FilterExpression: aws.String("MobileNumber = :mobileNumber"),
+			ExpressionAttributeValues: map[string]types.AttributeValue{
+				":mobileNumber": &types.AttributeValueMemberS{Value: mobileNumber},
+			},
+		}
+		mobileResult, err := db.Client.Scan(context.TODO(), mobileQueryInput)
+		if err != nil {
+			return count, err
+		}
 
-	emailResult, err := db.Client.Query(context.TODO(), emailQueryInput)
-	if err != nil {
-		return count, err
-	}
-
-	if len(emailResult.Items) > 0 {
-		count = count + 1
-	}
-
-	mobileResult, err := db.Client.Scan(context.TODO(), mobileQueryInput)
-	if err != nil {
-		return count, err
-	}
-
-	if len(mobileResult.Items) > 0 {
-		count = count + 2
+		if len(mobileResult.Items) > 0 {
+			count = count + 2
+		}
 	}
 
 	return count, nil
@@ -297,6 +280,35 @@ func (db *DynamoDb) Delete(TableName string, condition map[string]interface{}) (
 	return db.Client.DeleteItem(context.TODO(), input)
 }
 
+func (db *DynamoDb) QueryEmail(TableName string, email string) (*dynamodb.QueryOutput, error) {
+	//
+	QueryInput := &dynamodb.QueryInput{
+		TableName:              aws.String("users"),
+		IndexName:              aws.String("EmailIndex"),
+		KeyConditionExpression: aws.String("Email = :email"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":email": &types.AttributeValueMemberS{Value: email},
+		},
+	}
+	return db.Client.Query(context.TODO(), QueryInput)
+}
+func (db *DynamoDb) QueryMobileNumber(TableName string, mobile string) (*dynamodb.QueryOutput, error) {
+	//
+	QueryInput := &dynamodb.QueryInput{
+		TableName:              aws.String("users"),
+		IndexName:              aws.String("MobileNumberIndex"),
+		KeyConditionExpression: aws.String("MobileNumber = :mobile"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":mobile": &types.AttributeValueMemberS{Value: mobile},
+		},
+		AttributesToGet: []string{
+			"Password",
+		},
+		Limit: aws.Int32(1),
+	}
+	return db.Client.Query(context.TODO(), QueryInput)
+}
+
 //
 //
 //
@@ -319,12 +331,39 @@ func (db *DynamoDb) CreateUser(user *model.User) (string, error) {
 	common.Println("ajaj user inserted into database: ", user.ID)
 	return common.Int64toa(user.ID), nil
 }
+
 func (db *DynamoDb) GetUsers() []*model.User {
-	return nil
+	return []*model.User{}
 }
 
 func (db *DynamoDb) GetUserById(id string) (*model.User, error) {
-	return nil, nil
+
+	user := &model.User{}
+	var response *dynamodb.QueryOutput
+	var err error
+
+	if common.IsEmail(id) {
+		response, err = db.QueryEmail("users", id)
+	} else if common.IsMobileNumber(id) {
+		response, err = db.QueryMobileNumber("users", id)
+	} else {
+		return nil, common.Error("Please enter a valid mobile or email")
+	}
+	if isResourceNotFoundException(err) {
+		return nil, common.Error("User is not registered.")
+	}
+	if err != nil {
+		return nil, err
+	}
+	if len(response.Items) == 0 {
+		return nil, common.Error("User is not registered.")
+	}
+	//
+	err = attributevalue.UnmarshalMap(response.Items[0], user)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (db *DynamoDb) UpdateUser(id string, user *model.User) (*model.User, error) {

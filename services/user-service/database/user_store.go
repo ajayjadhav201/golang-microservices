@@ -68,7 +68,7 @@ func (s *userStore) GetUsers() []*model.User {
 	return nil
 }
 
-func (s *userStore) GetUserById(id string) (*model.User, error) {
+func (s *userStore) GetUserById(email string) (*model.User, error) {
 	//
 	return nil, nil
 }

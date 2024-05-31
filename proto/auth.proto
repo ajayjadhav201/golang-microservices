@@ -18,27 +18,17 @@ message Response{
 }
 
 message SignupRequest {
-    string FirstName = 1;
-    string LastName = 2;
-    string Email = 3;
-    string Password = 4;
-    string MobileNumber = 5;
-    string Address = 6;
-    string City = 7;
-    string State = 8;
-    string Country = 9;
-    string ZipCode = 10;
-    string ProfileImage = 11;
+    UserDetails User = 1;
 }
 
 message SignupResponse {
     string Message = 1;
-    UpdateUserRequest data = 3;
     string Token = 2;
+    UserDetails User = 3;
 }
 
 message LoginRequest {
-    string Email = 1;
+    string EmailorMobile = 1;
     string Password = 2;
 }
 
@@ -49,17 +39,7 @@ message LoginResponse {
 
 message UpdateUserRequest {
     string UserID       = 1;
-    string FirstName    = 2;
-    string LastName     = 3;
-    string Email        = 4;
-    string Password     = 5;
-    string MobileNumber = 6;
-    string Address      = 7;
-    string City         = 8;
-    string State        = 9;
-    string Country      = 10;
-    string ZipCode      = 11;
-    string ProfileImage = 12;
+    UserDetails User    = 2;
 }
 
 message UpdateUserResponse {
@@ -88,7 +68,6 @@ message DeleteUserResponse {
 }
 
 message UserDetails {
-    string UserID       = 1;
     string FirstName    = 2;
     string LastName     = 3;
     string Email        = 4;

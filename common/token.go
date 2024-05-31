@@ -6,14 +6,14 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func CreateToken(User string) (string, error) {
+func CreateToken(userid string) (string, error) {
 	// Define the signing key (this should be kept secret)
 	var signingKey = []byte(EnvString("SIGNING_KEY", "secret_key"))
 
 	// Create the token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"authorized": true,
-		"userid":     User,
+		"userid":     userid,
 		"exp":        time.Now().Add(time.Hour * 24).Unix(), // Token expires in 24 hours
 	})
 

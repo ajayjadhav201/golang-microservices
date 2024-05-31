@@ -8,34 +8,50 @@ import (
 	"golang-microservices/common"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 )
 
-func AuthMiddleware(next http.Handler) http.Handler {
-	//
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authHeader := r.Header.Get("Authorization")
-		if authHeader == "" {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
+func AuthMiddleware(c *gin.Context) {
+	authHeader := c.Request.Header.Get("Authorization")
+	if authHeader == "" {
+		common.WriteError(c, http.StatusUnauthorized, "Authorization failed")
+		c.Abort()
+		return
+	}
 
-		parts := strings.Split(authHeader, " ")
-		if len(parts) != 2 || parts[0] != "Bearer" {
-			http.Error(w, "Invalid Authorization header format", http.StatusUnauthorized)
-			return
-		}
+	parts := strings.Split(authHeader, " ")
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		common.WriteError(c, http.StatusUnauthorized, "Invalid Authorization header format")
+		c.Abort()
+		return
+	}
 
-		token := parts[1]
-		// Validate the token (e.g., using a JWT library)
-		_, err := ValidateToken(token)
-		if err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
+	token := parts[1]
+	// Validate the token (e.g., using a JWT library)
+	tkn, err := ValidateToken(token)
+	if err != nil {
+		common.Println("auth failed error is : ", err.Error())
+		common.WriteError(c, http.StatusUnauthorized, "Authorization failed")
+		c.Abort()
+		return
+	}
 
-		// ctx := context.WithValue(r.Context(), "user", claims["user"])
-		next.ServeHTTP(w, r)
-	})
+	var userid = ""
+	if claims, ok := tkn.Claims.(jwt.MapClaims); ok && tkn.Valid {
+		userid = claims["userid"].(string) //user ID is stored in "user_id" claim
+	}
+
+	if userid == "" {
+		common.WriteError(c, http.StatusUnauthorized, "Authorization failed, Token not valid")
+		c.Abort()
+		return
+	}
+
+	c.Set("userid", userid)
+	c.Next()
+
+	// ctx := context.WithValue(r.Context(), "user", claims["user"]
+
 }
 
 func CreateToken(UserId string) (string, error) {
@@ -59,7 +75,7 @@ func CreateToken(UserId string) (string, error) {
 }
 
 func ValidateToken(tokenString string) (*jwt.Token, error) {
-	var signingKey = []byte("your-256-bit-secret")
+	var signingKey = []byte(common.EnvString("SIGNING_KEY", "secret_key"))
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
