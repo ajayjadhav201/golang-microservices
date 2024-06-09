@@ -34,8 +34,6 @@ func (m *MailService) SendMail() error {
 		return common.Error("Internal server error")
 	}
 	//
-	// from := "jadhavaj201@gmail.com"
-	// password := "wlpn bkaf qlof tajn"
 
 	//
 	to := []string{"vithaiautoindustries@gmail.com"}
@@ -45,5 +43,3 @@ func (m *MailService) SendMail() error {
 
 	return smtp.SendMail("smtp.gmail.com:587", m.auth, m.from, to, []byte(sub))
 }
-
-
