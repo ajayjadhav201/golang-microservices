@@ -4,7 +4,7 @@ import (
 	"context"
 	"mime/multipart"
 
-	"golang-microservices/common"
+	"github.com/ajayjadhav201/common"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -14,6 +14,7 @@ import (
 
 type AwsS3Service struct {
 	BucketName string
+	client     *s3.Client
 	Uploader   *manager.Uploader
 }
 
@@ -41,6 +42,7 @@ func NewAwsS3Service() *AwsS3Service {
 			),
 		},
 	)
+
 	uploader := manager.NewUploader(client)
 	//
 	return &AwsS3Service{
@@ -49,25 +51,33 @@ func NewAwsS3Service() *AwsS3Service {
 	}
 }
 
-func UploadFile(Uploader *manager.Uploader, BucketName string, fileHeader *multipart.FileHeader) (string, error) {
+func (awsService *AwsS3Service) UploadFile(fileHeader *multipart.FileHeader) (string, error) {
 	file, err := fileHeader.Open()
 	if err != nil {
 		return "", err
 	}
 	defer file.Close()
 	//
-	_, err = Uploader.Upload(context.TODO(), &s3.PutObjectInput{
-		Bucket: aws.String(BucketName),
+	_, err = awsService.Uploader.Upload(context.TODO(), &s3.PutObjectInput{
+		Bucket: aws.String(awsService.BucketName),
 		Key:    aws.String(fileHeader.Filename),
 		Body:   file, //here upload multipart file
 		// ContentLength: aws.Int64(size),
 		// ContentType: aws.String("text/plain"),        //text/plain  //image/jpeg
 		// ACL: types.ObjectCannedACLPublicRead, // Make the object publicly readable
 	})
-
-	if err != nil {
-		return "", err
-	}
+	//
 	// url := common.Sprintf("https://%s.s3.amazonaws.com/%s", BucketName, fileHeader.Filename)
-	return fileHeader.Filename, nil
+	return fileHeader.Filename, err
+}
+
+func (awsService *AwsS3Service) DeleteFile(FileName string) error {
+	//
+	input := &s3.DeleteObjectInput{
+		Bucket: aws.String(awsService.BucketName),
+		Key:    aws.String(FileName),
+	}
+
+	_, err := awsService.client.DeleteObject(context.Background(), input)
+	return err
 }

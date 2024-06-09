@@ -160,3 +160,8 @@ func WriteRequestBodyError(c *gin.Context, err error) {
 		WriteError(c, http.StatusBadRequest, InvalidReqBody)
 	}
 }
+
+func WriteErrorIf(c *gin.Context, status int, message string) {
+	//
+	WriteError(c, status, message)
+}

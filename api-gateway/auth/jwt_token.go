@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"golang-microservices/common"
+	"github.com/ajayjadhav201/common"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -31,7 +31,7 @@ func AuthMiddleware(c *gin.Context) {
 	tkn, err := ValidateToken(token)
 	if err != nil {
 		common.Println("auth failed error is : ", err.Error())
-		common.WriteError(c, http.StatusUnauthorized, "Authorization failed")
+		common.WriteError(c, http.StatusUnauthorized, err.Error())
 		c.Abort()
 		return
 	}

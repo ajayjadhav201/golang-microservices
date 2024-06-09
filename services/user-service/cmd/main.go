@@ -1,11 +1,12 @@
 package main
 
 import (
-	"golang-microservices/api/pb"
-	"golang-microservices/common"
 	"net"
 	"user-service/database"
 	"user-service/routes"
+
+	"github.com/ajayjadhav201/api/pb"
+	"github.com/ajayjadhav201/common"
 
 	"github.com/joho/godotenv"
 	_ "github.com/joho/godotenv/autoload"

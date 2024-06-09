@@ -2,9 +2,10 @@ package routes
 
 import (
 	"context"
-	"golang-microservices/api/pb"
-	"golang-microservices/common"
 	"time"
+
+	"github.com/ajayjadhav201/api/pb"
+	"github.com/ajayjadhav201/common"
 
 	"user-service/database"
 	"user-service/model"

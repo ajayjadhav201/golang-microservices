@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package order;
+
+service ProductService {
+// 
+rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse);
+
+}
+
+message OrderDetails{
+    string ID   = 1;
+    repeated string ProductIds  = 2;
+}
+
+
+message CreateOrderRequest {
+    repeated string ProductIds  = 2;
+}
+
+message CreateOrderResponse {
+    // 
+    string Message = 1;
+}
+
+message GetOrdersRequest {
+    // 
+}
+
+message GetOrdersResponse {
+    // 
+}
+
+message UpdateOrderRequest {
+    // 
+}
+
+message UpdateOrderResponse {
+    // 
+}
+
+message DeleteOrderRequest {
+    // 
+}
+
+message DeleteOrderResponse {
+    // 
+}

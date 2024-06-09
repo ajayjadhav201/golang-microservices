@@ -9,6 +9,7 @@
 *.dylib
 *.env
 .env
+vendor
 # common/secrets.go
 api-gateway/*.env
 api-gateway/.env

@@ -1,8 +1,9 @@
 package model
 
 import (
-	"golang-microservices/common"
 	"time"
+
+	"github.com/ajayjadhav201/common"
 )
 
 /*

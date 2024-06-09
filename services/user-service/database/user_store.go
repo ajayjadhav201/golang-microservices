@@ -3,7 +3,7 @@ package database
 import (
 	"user-service/model"
 
-	"golang-microservices/common"
+	"github.com/ajayjadhav201/common"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

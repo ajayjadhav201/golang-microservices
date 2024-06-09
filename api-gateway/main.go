@@ -1,11 +1,13 @@
 package main
 
 import (
+	"github.com/ajayjadhav201/common"
+
 	"golang-microservices/api-gateway/auth"
 	"golang-microservices/api-gateway/cache"
 	"golang-microservices/api-gateway/products"
-	"golang-microservices/api/pb"
-	"golang-microservices/common"
+
+	"github.com/ajayjadhav201/api/pb"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
@@ -24,7 +26,8 @@ func main() {
 	err := godotenv.Load(".env")
 	common.Panic(err)
 	//
-	// aws := auth.NewAwsS3Service()
+	mailService := auth.NewMailService("", "")
+	aws := auth.NewAwsS3Service()
 	redis, err := RedisClient()
 	if err == nil {
 		defer redis.Close()
@@ -34,21 +37,29 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	//
-	AuthService(r, nil) //here pass aws s3 service
+	AuthService(r, aws, mailService) //here pass aws s3 service
 	ProductService(r)
 	//
 	common.Println("Http Server started on: ", httpAddr)
 	common.Fatal(r.Run(":8080"))
 }
 
-func AuthService(r *gin.Engine, aws *auth.AwsS3Service) {
+//
+//
+//
+//
+//
+//
+//
+
+func AuthService(r *gin.Engine, aws *auth.AwsS3Service, mailService *auth.MailService) {
 	// Authentication Client
 	creds := grpc.WithTransportCredentials(insecure.NewCredentials())
 	GrpcAuthClient, err := grpc.NewClient("localhost:2001", creds)
 	common.Fatal(err)
 	GrpcAuthConnection := pb.NewAuthServiceClient(GrpcAuthClient)
-	authGroup := r.Group("/api/v2/") // authgroup
-	authClient := auth.NewAuthClient(GrpcAuthConnection, aws)
+	authGroup := r.Group("/api/v2/")                                       // authgroup
+	authClient := auth.NewAuthClient(GrpcAuthConnection, aws, mailService) //aws
 	authClient.RegisterRoutes(authGroup)
 }
 

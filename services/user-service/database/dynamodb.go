@@ -5,7 +5,7 @@ import (
 	"errors"
 	"user-service/model"
 
-	"golang-microservices/common"
+	"github.com/ajayjadhav201/common"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"

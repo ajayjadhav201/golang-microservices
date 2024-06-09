@@ -2,10 +2,11 @@ package auth
 
 import (
 	"errors"
-	"golang-microservices/api/pb"
 	"net/http"
 
-	"golang-microservices/common"
+	"github.com/ajayjadhav201/api/pb"
+
+	"github.com/ajayjadhav201/common"
 
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/gin-gonic/gin"
@@ -16,18 +17,25 @@ type AuthClient struct {
 	aws    *AwsS3Service
 }
 
-func NewAuthClient(service pb.AuthServiceClient, aws *AwsS3Service) *AuthClient {
+func NewAuthClient(service pb.AuthServiceClient, aws *AwsS3Service, mail *MailService) *AuthClient {
 	return &AuthClient{service, aws}
 }
 
 func (a *AuthClient) RegisterRoutes(r *gin.RouterGroup) {
+
 	r.POST("/signup", a.SignupHandler)
 	r.POST("/login", a.LoginHandler)
-	r.POST("/uploadimage", AuthMiddleware, a.UploadImage)
-	r.POST("/changepassword", a.ChangePassword)
+	r.POST("/forgotpassword", a.ForgotPasswordHandler)
+	// all below routes needs authorization
 	r.Use(AuthMiddleware)
-	r.POST("/updateuser", a.UpdateUserHandler)
-	r.POST("/deleteuser", a.DeleteUser)
+	{
+		r.POST("/uploadimage", a.UploadImage)
+		// r.POST("/removeimage")
+		r.POST("/changepassword", a.ChangePassword)
+		r.POST("/updateuser", a.UpdateUserHandler)
+		r.POST("/deleteuser", a.DeleteUser)
+	}
+
 }
 
 //
@@ -73,7 +81,7 @@ func (a *AuthClient) LoginHandler(c *gin.Context) {
 	common.WriteJSON(c, http.StatusOK, res)
 }
 
-func (a *AuthClient) ForgotPassword() {
+func (a *AuthClient) ForgotPasswordHandler(c *gin.Context) {
 	// mail sending
 }
 
@@ -136,19 +144,20 @@ func (a *AuthClient) DeleteUser(c *gin.Context) {
 
 // upload profile image
 func (a *AuthClient) UploadImage(c *gin.Context) {
-	common.Println("request received as ", c.Request.Body)
+	common.Println("request received as ", c.Request.Header.Get("Authorization"))
 	if a.aws == nil {
 		common.WriteError(c, http.StatusServiceUnavailable, "Service not available")
 		return
 	}
-	err := c.Request.ParseMultipartForm(2 << 20)
+	// err := c.Request.ParseMultipartForm(2 << 20)
+	// if err != nil {
+	// 	common.WriteError(c, http.StatusInternalServerError, err.Error())
+	// 	return
+	// }
+
+	form, err := c.MultipartForm()
 	if err != nil {
-		common.WriteError(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	form := c.Request.MultipartForm
-	if form == nil {
-		common.WriteError(c, http.StatusBadRequest, "Unable to load form-data")
+		common.WriteError(c, http.StatusBadRequest, common.Sprintf("Unable to load form-data: %s", err.Error()))
 		return
 	}
 	//data := form.Value //these are form fileds
@@ -158,19 +167,20 @@ func (a *AuthClient) UploadImage(c *gin.Context) {
 		common.WriteError(c, http.StatusBadRequest, "Please upload files")
 		return
 	}
-	common.Println("ajaj files are: ", files)
+	// common.Println("ajaj files are: ", files)
 
 	var uploadedUrls []string
 
-	for _, file := range files {
+	for k, file := range files {
 		fileHeaders := file
+
 		if len(fileHeaders) == 0 {
 			common.Println("ajaj fileheader is empty", fileHeaders)
 			common.WriteError(c, http.StatusInternalServerError, "Unable to read Empty file")
 			return
 		}
-		common.Println("ajaj fileheader is ", fileHeaders[0])
-		url, err := UploadFile(a.aws.Uploader, a.aws.BucketName, fileHeaders[0])
+		common.Println("ajaj fileheader is key: ", k, "and data is: ", fileHeaders[0].Size)
+		url, err := a.aws.UploadFile(fileHeaders[0])
 		//
 		if err != nil {
 			common.Println(" error occured while uploading image", err)
@@ -186,4 +196,8 @@ func (a *AuthClient) UploadImage(c *gin.Context) {
 	}
 
 	common.WriteJSON(c, http.StatusOK, common.Response{Message: common.Sprintf("Files uploaded successfully. path: %s", uploadedUrls[0])})
+}
+
+func (a *AuthClient) RemovImageHandler(c *gin.Context) {
+	//
 }
